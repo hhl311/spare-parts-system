@@ -1,0 +1,19 @@
+version: '3'
+services:
+  catalog-service:
+    image: catalog-service
+    container_name: catalog-service
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+
+  orders-service:
+    image: orders-service
+    container_name: orders-service
+    ports:
+      - "8081:8080"
+    depends_on:
+      - catalog-service
+    environment:
+      - SPARE_PARTS_SERVICE_LOCATION=catalog-service:8080

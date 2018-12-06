@@ -2,17 +2,23 @@ package main
 
 import (
 	"../../business-structures"
+	"./consumers"
 	"./dao"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 )
 
 var router *gin.Engine
 var ordersDao dao.OrdersDao = &dao.MapOrdersDao{}
+var sparePartsConsumer consumers.SparePartsConsumer
 
 func main() {
+	sparePartsConsumer = consumers.SparePartsConsumer{ServiceLocation: os.Getenv("SPARE_PARTS_SERVICE_LOCATION")}
+
 	router = gin.Default()
 
 	router.POST("orders/", createOrder)
@@ -32,7 +38,12 @@ func createOrder(c *gin.Context) {
 	received.CreationDate = time.Now()
 	received.Validated = false
 
-	// TODO Communicate with Catalog service to make sure spare parts references exist.
+	for _, reference := range received.ContentReferences {
+		if _, err := sparePartsConsumer.GetSparePart(reference); err != nil {
+			c.JSON(http.StatusBadRequest, "Ordered reference(s) do not exist")
+			return
+		}
+	}
 
 	if id, err := ordersDao.Create(received); err == nil {
 		received.ID = id
@@ -60,6 +71,7 @@ func validateOneOrder(c *gin.Context) {
 
 	if modified {
 		// TODO Enqueue the validated order in the bus.
+		fmt.Println("Validated order", orderId)
 		c.JSON(http.StatusOK, "Validated!")
 	} else {
 		c.JSON(http.StatusNotModified, "Not found or already validated!")

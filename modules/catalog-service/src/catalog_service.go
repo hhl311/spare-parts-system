@@ -48,8 +48,6 @@ func getOneSparePart(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusInternalServerError, err)
 	}
-
-	c.JSON(http.StatusOK, reference)
 }
 
 func getAllSpareParts(c *gin.Context) {
