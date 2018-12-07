@@ -10,6 +10,7 @@ clean:
 	rm -f $(BINARY_UNIX)
 deps:
 	go get github.com/gin-gonic/gin
+	go get github.com/streadway/amqp
 
 # Cross compilation
 build-linux: $(BINARY_UNIX)

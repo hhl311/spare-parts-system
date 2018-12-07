@@ -42,3 +42,7 @@ func (dao *MapOrdersDao) GetAll() ([]models.Order, error) {
 
 	return values, nil
 }
+
+func (dao *MapOrdersDao) GetOne(orderId string) (models.Order, error) {
+	return dao.content[orderId], nil
+}

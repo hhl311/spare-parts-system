@@ -12,18 +12,34 @@ import (
 	"time"
 )
 
+const (
+	sparePartsServiceLocation = "SPARE_PARTS_SERVICE_LOCATION"
+
+	validatedOrdersChannelName    = "VALIDATED_ORDERS_CHANNEL"
+	validatedOrdersBusLocation    = "VALIDATED_ORDERS_BUS_LOCATION"
+	validatedOrdersBusCredentials = "VALIDATED_ORDERS_BUS_CREDENTIALS"
+)
+
 var router *gin.Engine
-var ordersDao dao.OrdersDao = &dao.MapOrdersDao{}
+var ordersDao dao.OrdersDao
 var sparePartsConsumer consumers.SparePartsConsumer
+var ordersSender consumers.ValidatedOrdersSender
 
 func main() {
-	sparePartsConsumer = consumers.SparePartsConsumer{ServiceLocation: os.Getenv("SPARE_PARTS_SERVICE_LOCATION")}
+	// TODO Replace with a DB DAO.
+	ordersDao = &dao.MapOrdersDao{}
+	sparePartsConsumer = consumers.SparePartsConsumer{
+		ServiceLocation: os.Getenv(sparePartsServiceLocation)}
+	ordersSender = consumers.ValidatedOrdersSender{
+		ChannelName:    os.Getenv(validatedOrdersChannelName),
+		BusLocation:    os.Getenv(validatedOrdersBusLocation),
+		BusCredentials: os.Getenv(validatedOrdersBusCredentials)}
 
 	router = gin.Default()
 
 	router.POST("orders/", createOrder)
 	router.GET("orders/", getAllOrders)
-	router.PUT("orders/:reference", validateOneOrder)
+	router.PUT("orders/:id", validateOneOrder)
 
 	_ = router.Run()
 }
@@ -50,12 +66,12 @@ func createOrder(c *gin.Context) {
 
 		c.JSON(http.StatusCreated, received)
 	} else {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, "Error while creating an order")
 	}
 }
 
 func validateOneOrder(c *gin.Context) {
-	orderId := c.Param("reference")
+	orderId := c.Param("id")
 
 	if validated, err := strconv.ParseBool(c.Query("validate")); err != nil || !validated {
 		c.JSON(http.StatusNotModified, "Nothing is queried.")
@@ -65,12 +81,25 @@ func validateOneOrder(c *gin.Context) {
 	modified, err := ordersDao.Validate(orderId)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, "Error while validating the order")
 		return
 	}
 
 	if modified {
-		// TODO Enqueue the validated order in the bus.
+		updated, err := ordersDao.GetOne(orderId)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, "Error while getting the validated order")
+			return
+		}
+
+		err = ordersSender.Send(updated)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, "Error while sending the validated order on the bus")
+			return
+		}
+
 		fmt.Println("Validated order", orderId)
 		c.JSON(http.StatusOK, "Validated!")
 	} else {
@@ -82,6 +111,6 @@ func getAllOrders(c *gin.Context) {
 	if found, err := ordersDao.GetAll(); err == nil {
 		c.JSON(http.StatusOK, found)
 	} else {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, "Error while getting all orders")
 	}
 }

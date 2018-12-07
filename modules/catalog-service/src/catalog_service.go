@@ -8,6 +8,8 @@ import (
 )
 
 var router *gin.Engine
+
+// TODO Replace with DGraph DAO.
 var sparePartsDao dao.SparePartsDao = &dao.ArraySparePartsDao{}
 
 func main() {
