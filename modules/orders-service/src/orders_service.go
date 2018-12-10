@@ -2,6 +2,7 @@ package main
 
 import (
 	"../../business-structures"
+	"../../communication"
 	"./consumers"
 	"./dao"
 	"fmt"
@@ -22,13 +23,13 @@ const (
 
 var router *gin.Engine
 var ordersDao dao.OrdersDao
-var sparePartsConsumer consumers.SparePartsConsumer
+var sparePartsConsumer communication.SparePartsConsumer
 var ordersSender consumers.ValidatedOrdersSender
 
 func main() {
 	// TODO Replace with a DB DAO.
 	ordersDao = &dao.MapOrdersDao{}
-	sparePartsConsumer = consumers.SparePartsConsumer{
+	sparePartsConsumer = communication.SparePartsConsumer{
 		ServiceLocation: os.Getenv(sparePartsServiceLocation)}
 	ordersSender = consumers.ValidatedOrdersSender{
 		ChannelName:    os.Getenv(validatedOrdersChannelName),

@@ -1,10 +1,17 @@
 version: '3'
 services:
+  validated-orders-bus:
+    image: rabbitmq
+    container_name: validated-orders-bus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   catalog-service:
     image: catalog-service
     container_name: catalog-service
-    expose:
-      - "8080"
     ports:
       - "8080:8080"
 
@@ -15,5 +22,21 @@ services:
       - "8081:8080"
     depends_on:
       - catalog-service
+      - validated-orders-bus
     environment:
       - SPARE_PARTS_SERVICE_LOCATION=catalog-service:8080
+      - VALIDATED_ORDERS_CHANNEL=validated_orders
+      - VALIDATED_ORDERS_BUS_LOCATION=validated-orders-bus
+      - VALIDATED_ORDERS_BUS_CREDENTIALS=guest:guest
+
+  packing-slips-service:
+    image: packing-slips-service
+    container_name: packing-slips-service
+    restart: on-failure # may happen some times in order to wait validated-orders-bus to be healthy
+    depends_on:
+      - validated-orders-bus
+    environment:
+      - SPARE_PARTS_SERVICE_LOCATION=catalog-service:8080
+      - VALIDATED_ORDERS_CHANNEL=validated_orders
+      - VALIDATED_ORDERS_BUS_LOCATION=validated-orders-bus
+      - VALIDATED_ORDERS_BUS_CREDENTIALS=guest:guest

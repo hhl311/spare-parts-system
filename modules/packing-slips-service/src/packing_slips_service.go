@@ -2,35 +2,69 @@ package main
 
 import (
 	"../../business-structures"
+	"../../communication"
 	"./consumers"
+	"./notifications"
 	"log"
+	"os"
+	"time"
 )
 
+const (
+	sparePartsServiceLocation = "SPARE_PARTS_SERVICE_LOCATION"
+
+	validatedOrdersChannelName    = "VALIDATED_ORDERS_CHANNEL"
+	validatedOrdersBusLocation    = "VALIDATED_ORDERS_BUS_LOCATION"
+	validatedOrdersBusCredentials = "VALIDATED_ORDERS_BUS_CREDENTIALS"
+)
+
+var sparePartsConsumer communication.SparePartsConsumer
+var notifier notifications.PackingSkipsNotifier
+
 func main() {
+	sparePartsConsumer = communication.SparePartsConsumer{
+		ServiceLocation: os.Getenv(sparePartsServiceLocation)}
+
 	ordersReceiver := consumers.ValidatedOrdersReceiver{
-		ChannelName:    "validated_orders",
-		BusLocation:    "localhost:5672",
-		BusCredentials: "guest:guest"}
+		ChannelName:    os.Getenv(validatedOrdersChannelName),
+		BusLocation:    os.Getenv(validatedOrdersBusLocation),
+		BusCredentials: os.Getenv(validatedOrdersBusCredentials)}
+
+	notifier = &notifications.LoggerPackingSlipsNotifier{}
 
 	ordersReceiver.LaunchAcknowledgment(func(order models.Order) {
 		if packingSlip, err := createPackingSlip(order); err == nil {
-			err := notify(packingSlip)
-
-			if err != nil {
-				log.Fatal(err)
+			if err := notifier.Notify(packingSlip); err != nil {
+				log.Fatal("Error while notifying the new packing slip", err)
 			}
+		} else {
+			log.Fatal("Error while getting a validated order", err)
 		}
 	})
 }
 
 func createPackingSlip(order models.Order) (models.PackingSlip, error) {
-	// TODO Implement this.
-	// TODO Fetch all article and replace it by its content if necessary
-	return models.PackingSlip{}, nil
-}
+	toBeSent := models.PackingSlip{OrderID: order.ID}
 
-func notify(packingSlip models.PackingSlip) error {
-	log.Println(packingSlip)
+	for _, reference := range order.ContentReferences {
+		log.Println("Getting spare parts associated to", reference)
+		if sparePart, err := sparePartsConsumer.GetSparePart(reference); err != nil {
+			log.Println("Failed to get spare parts associated to", reference)
+			return models.PackingSlip{}, err
+		} else {
+			log.Println("Got spare part associated to", reference, ":", sparePart)
 
-	return nil
+			if sparePart.ContentReferences == nil || len(sparePart.ContentReferences) == 0 {
+				log.Println("Spare part", reference, "is not composed of others spare parts")
+				toBeSent.ContentReferences = append(toBeSent.ContentReferences, sparePart.Reference)
+			} else {
+				log.Println("Spare part", reference, "is composed of", sparePart.ContentReferences)
+				toBeSent.ContentReferences = append(toBeSent.ContentReferences, sparePart.ContentReferences...)
+			}
+		}
+	}
+
+	toBeSent.SentDate = time.Now()
+
+	return toBeSent, nil
 }
