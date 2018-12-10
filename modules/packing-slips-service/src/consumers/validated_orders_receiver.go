@@ -18,7 +18,7 @@ func (receiver *ValidatedOrdersReceiver) LaunchAcknowledgment(consumer func(mode
 	conn, err := amqp.Dial("amqp://" + receiver.BusCredentials + "@" + receiver.BusLocation + "/")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -26,7 +26,7 @@ func (receiver *ValidatedOrdersReceiver) LaunchAcknowledgment(consumer func(mode
 		err := conn.Close()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}()
 
@@ -35,7 +35,7 @@ func (receiver *ValidatedOrdersReceiver) LaunchAcknowledgment(consumer func(mode
 		err := ch.Close()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}()
 
@@ -64,6 +64,8 @@ func (receiver *ValidatedOrdersReceiver) LaunchAcknowledgment(consumer func(mode
 		nil,
 	)
 
+	log.Println("Listening bus")
+
 	forever := make(chan bool)
 
 	go func() {
@@ -74,7 +76,7 @@ func (receiver *ValidatedOrdersReceiver) LaunchAcknowledgment(consumer func(mode
 				consumer(order)
 
 				if err := d.Ack(false); err != nil {
-					log.Fatal(err)
+					log.Println(err)
 				}
 			}
 		}

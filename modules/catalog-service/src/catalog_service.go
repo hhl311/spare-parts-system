@@ -5,12 +5,17 @@ import (
 	"./dao"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
+)
+
+const (
+	databaseLocation = "DATABASE_LOCATION"
 )
 
 var router *gin.Engine
 
 // TODO Replace with DGraph DAO.
-var sparePartsDao dao.SparePartsDao = &dao.ArraySparePartsDao{}
+var sparePartsDao dao.SparePartsDao = &dao.DGraphSparePartsDao{DatabaseLocation: os.Getenv(databaseLocation)}
 
 func main() {
 	router = gin.Default()

@@ -35,10 +35,10 @@ func main() {
 	ordersReceiver.LaunchAcknowledgment(func(order models.Order) {
 		if packingSlip, err := createPackingSlip(order); err == nil {
 			if err := notifier.Notify(packingSlip); err != nil {
-				log.Fatal("Error while notifying the new packing slip", err)
+				log.Println("Error while notifying the new packing slip", err)
 			}
 		} else {
-			log.Fatal("Error while getting a validated order", err)
+			log.Println("Error while getting a validated order", err)
 		}
 	})
 }

@@ -21,7 +21,7 @@ func (consumer *SparePartsConsumer) GetSparePart(reference string) (models.Spare
 
 	response, getErr := http.Get("http://" + consumer.ServiceLocation + "/spare-parts/" + reference)
 	if getErr != nil {
-		Logger.Fatal("Get error:", getErr)
+		Logger.Println("Get error:", getErr)
 		return models.SparePart{}, getErr
 	}
 
@@ -32,13 +32,13 @@ func (consumer *SparePartsConsumer) GetSparePart(reference string) (models.Spare
 
 	body, readErr := ioutil.ReadAll(response.Body)
 	if readErr != nil {
-		Logger.Fatal("Read error:", readErr)
+		Logger.Println("Read error:", readErr)
 		return models.SparePart{}, getErr
 	}
 
 	var sparePart models.SparePart
 	if jsonErr := json.Unmarshal(body, &sparePart); jsonErr != nil {
-		Logger.Fatal("JSON error:", jsonErr)
+		Logger.Println("JSON error:", jsonErr)
 		return models.SparePart{}, jsonErr
 	}
 

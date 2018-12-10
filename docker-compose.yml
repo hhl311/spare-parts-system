@@ -1,5 +1,54 @@
-version: '3'
+version: "3.2"
 services:
+  postgresql:
+    image: postgres
+    container_name: postgres
+    volumes:
+      - type: volume
+        source: orders
+        target: /orders
+        volume:
+          nocopy: true
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pwd
+
+  dgraph-zero:
+    image: dgraph/dgraph:latest
+    container_name: dgraph-zero
+    volumes:
+      - type: volume
+        source: articles
+        target: /articles
+        volume:
+          nocopy: true
+    restart: on-failure
+    command: dgraph zero --my=dgraph-zero:5080
+
+  dgraph-server:
+    image: dgraph/dgraph:latest
+    container_name: dgraph-server
+    volumes:
+      - type: volume
+        source: articles
+        target: /articles
+        volume:
+          nocopy: true
+    restart: on-failure
+    command: dgraph alpha --my=dgraph-server:7080 --lru_mb=2048 --zero=dgraph-zero:5080
+
+  dgraph-ratel:
+    image: dgraph/dgraph:latest
+    container_name: dgraph-ratel
+    volumes:
+      - type: volume
+        source: articles
+        target: /articles
+        volume:
+          nocopy: true
+    command: dgraph-ratel
+
   validated-orders-bus:
     image: rabbitmq
     container_name: validated-orders-bus
@@ -14,6 +63,10 @@ services:
     container_name: catalog-service
     ports:
       - "8080:8080"
+    depends_on:
+      - dgraph-server
+    environment:
+      - DATABASE_LOCATION=dgraph-server:9080
 
   orders-service:
     image: orders-service
@@ -23,16 +76,20 @@ services:
     depends_on:
       - catalog-service
       - validated-orders-bus
+      - postgresql
     environment:
       - SPARE_PARTS_SERVICE_LOCATION=catalog-service:8080
       - VALIDATED_ORDERS_CHANNEL=validated_orders
       - VALIDATED_ORDERS_BUS_LOCATION=validated-orders-bus
       - VALIDATED_ORDERS_BUS_CREDENTIALS=guest:guest
+      - DATABASE_LOCATION=postgresql:5432
+      - DATABASE_USER=user
+      - DATABASE_PWD=pwd
 
   packing-slips-service:
     image: packing-slips-service
     container_name: packing-slips-service
-    restart: on-failure # may happen some times in order to wait validated-orders-bus to be healthy
+    restart: always # may happen some times in order to wait validated-orders-bus to be healthy
     depends_on:
       - validated-orders-bus
     environment:
@@ -40,3 +97,7 @@ services:
       - VALIDATED_ORDERS_CHANNEL=validated_orders
       - VALIDATED_ORDERS_BUS_LOCATION=validated-orders-bus
       - VALIDATED_ORDERS_BUS_CREDENTIALS=guest:guest
+
+volumes:
+  articles:
+  orders:

@@ -19,6 +19,10 @@ const (
 	validatedOrdersChannelName    = "VALIDATED_ORDERS_CHANNEL"
 	validatedOrdersBusLocation    = "VALIDATED_ORDERS_BUS_LOCATION"
 	validatedOrdersBusCredentials = "VALIDATED_ORDERS_BUS_CREDENTIALS"
+
+	databaseLocation = "DATABASE_LOCATION"
+	databaseUser     = "DATABASE_USER"
+	databasePassword = "DATABASE_PWD"
 )
 
 var router *gin.Engine
@@ -27,8 +31,9 @@ var sparePartsConsumer communication.SparePartsConsumer
 var ordersSender consumers.ValidatedOrdersSender
 
 func main() {
-	// TODO Replace with a DB DAO.
-	ordersDao = &dao.MapOrdersDao{}
+	ordersDao = &dao.PostgreSQLOrdersDao{DatabaseLocation: os.Getenv(databaseLocation),
+		DatabaseUser:     os.Getenv(databaseUser),
+		DatabasePassword: os.Getenv(databasePassword)}
 	sparePartsConsumer = communication.SparePartsConsumer{
 		ServiceLocation: os.Getenv(sparePartsServiceLocation)}
 	ordersSender = consumers.ValidatedOrdersSender{
@@ -74,12 +79,18 @@ func createOrder(c *gin.Context) {
 func validateOneOrder(c *gin.Context) {
 	orderId := c.Param("id")
 
+	orderIdInt, err := strconv.Atoi(orderId)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "Parameter ID should be an integer")
+	}
+
 	if validated, err := strconv.ParseBool(c.Query("validate")); err != nil || !validated {
 		c.JSON(http.StatusNotModified, "Nothing is queried.")
 		return
 	}
 
-	modified, err := ordersDao.Validate(orderId)
+	modified, err := ordersDao.Validate(orderIdInt)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "Error while validating the order")
@@ -87,7 +98,7 @@ func validateOneOrder(c *gin.Context) {
 	}
 
 	if modified {
-		updated, err := ordersDao.GetOne(orderId)
+		updated, err := ordersDao.GetOne(orderIdInt)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, "Error while getting the validated order")
@@ -101,7 +112,7 @@ func validateOneOrder(c *gin.Context) {
 			return
 		}
 
-		fmt.Println("Validated order", orderId)
+		fmt.Println("Validated order", orderIdInt)
 		c.JSON(http.StatusOK, "Validated!")
 	} else {
 		c.JSON(http.StatusNotModified, "Not found or already validated!")

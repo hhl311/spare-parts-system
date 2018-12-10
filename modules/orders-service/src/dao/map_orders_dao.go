@@ -2,26 +2,25 @@ package dao
 
 import (
 	"../../../business-structures"
-	"strconv"
 )
 
 type MapOrdersDao struct {
-	content map[string]models.Order
+	content map[int]models.Order
 }
 
-func (dao *MapOrdersDao) Create(order models.Order) (string, error) {
+func (dao *MapOrdersDao) Create(order models.Order) (int, error) {
 	if dao.content == nil {
-		dao.content = make(map[string]models.Order)
+		dao.content = make(map[int]models.Order)
 	}
 
-	order.ID = strconv.Itoa(len(dao.content))
+	order.ID = len(dao.content)
 
 	dao.content[order.ID] = order
 
 	return order.ID, nil
 }
 
-func (dao *MapOrdersDao) Validate(orderId string) (bool, error) {
+func (dao *MapOrdersDao) Validate(orderId int) (bool, error) {
 	order, isKnown := dao.content[orderId]
 
 	if isKnown {
@@ -43,6 +42,6 @@ func (dao *MapOrdersDao) GetAll() ([]models.Order, error) {
 	return values, nil
 }
 
-func (dao *MapOrdersDao) GetOne(orderId string) (models.Order, error) {
+func (dao *MapOrdersDao) GetOne(orderId int) (models.Order, error) {
 	return dao.content[orderId], nil
 }

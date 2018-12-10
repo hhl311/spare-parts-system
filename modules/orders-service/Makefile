@@ -11,6 +11,7 @@ clean:
 deps:
 	go get github.com/gin-gonic/gin
 	go get github.com/streadway/amqp
+	go get github.com/go-pg/pg
 
 # Cross compilation
 build-linux: $(BINARY_UNIX)

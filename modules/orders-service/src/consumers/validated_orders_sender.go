@@ -20,12 +20,12 @@ func (sender *ValidatedOrdersSender) Send(order models.Order) (err error) {
 		err := conn.Close()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -34,12 +34,12 @@ func (sender *ValidatedOrdersSender) Send(order models.Order) (err error) {
 		err := ch.Close()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (sender *ValidatedOrdersSender) Send(order models.Order) (err error) {
 	)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
