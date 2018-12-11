@@ -1,6 +1,6 @@
 # Spare Parts System
 
-[![img](https://travis-ci.org/AntoineAube/spare-parts-system.svg?branch=master)](https://travis-ci.org/AntoineAube/spare-parts-system.svg?branch=master)
+[![img](https://travis-ci.org/AntoineAube/spare-parts-system.svg?branch=master)](https://travis-ci.org/AntoineAube/spare-parts-system/)
 
 A minimalistic system for selling spare parts.
 
