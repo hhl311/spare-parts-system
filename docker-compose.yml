@@ -59,7 +59,7 @@ services:
       retries: 5
 
   catalog-service:
-    image: catalog-service
+    image: antoineaube/sps-catalog-service
     container_name: catalog-service
     ports:
       - "8080:8080"
@@ -69,7 +69,7 @@ services:
       - DATABASE_LOCATION=dgraph-server:9080
 
   orders-service:
-    image: orders-service
+    image: antoineaube/sps-orders-service
     container_name: orders-service
     ports:
       - "8081:8080"
@@ -87,7 +87,7 @@ services:
       - DATABASE_PWD=pwd
 
   packing-slips-service:
-    image: packing-slips-service
+    image: antoineaube/sps-packing-slips-service
     container_name: packing-slips-service
     restart: always # may happen some times in order to wait validated-orders-bus to be healthy
     depends_on:
