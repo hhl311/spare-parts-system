@@ -1,14 +1,14 @@
-package orders_service
+package main
 
 import (
 	"fmt"
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
+	"github.com/AntoineAube/spare-parts-system/modules/communication"
+	"github.com/AntoineAube/spare-parts-system/modules/orders-service/consumers"
+	"github.com/AntoineAube/spare-parts-system/modules/orders-service/dao"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
-	"spare-parts-system/modules/business-structures"
-	"spare-parts-system/modules/communication"
-	"spare-parts-system/modules/orders-service/consumers"
-	"spare-parts-system/modules/orders-service/dao"
 	"strconv"
 	"time"
 )

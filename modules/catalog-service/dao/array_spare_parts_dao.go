@@ -1,6 +1,6 @@
 package dao
 
-import "spare-parts-system/modules/business-structures"
+import "github.com/AntoineAube/spare-parts-system/modules/business-structures"
 
 type ArraySparePartsDao struct {
 	values []models.SparePart

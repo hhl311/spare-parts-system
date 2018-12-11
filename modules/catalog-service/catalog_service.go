@@ -1,11 +1,11 @@
-package catalog_service
+package main
 
 import (
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
+	"github.com/AntoineAube/spare-parts-system/modules/catalog-service/dao"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
-	"spare-parts-system/modules/business-structures"
-	"spare-parts-system/modules/catalog-service/dao"
 )
 
 const (

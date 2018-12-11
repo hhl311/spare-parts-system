@@ -1,6 +1,6 @@
 package dao
 
-import "spare-parts-system/modules/business-structures"
+import "github.com/AntoineAube/spare-parts-system/modules/business-structures"
 
 type OrdersDao interface {
 	Create(order models.Order) (int, error)

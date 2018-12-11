@@ -1,9 +1,9 @@
 package notifications
 
 import (
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
 	"log"
 	"os"
-	"spare-parts-system/modules/business-structures"
 )
 
 var Logger = log.New(os.Stdout, "[Packing slips notification] ", log.Ldate|log.Ltime|log.Lshortfile)

@@ -3,11 +3,11 @@ package communication
 import (
 	"encoding/json"
 	"errors"
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"spare-parts-system/modules/business-structures"
 )
 
 var Logger = log.New(os.Stdout, "[Spare parts consumer] ", log.Ldate|log.Ltime|log.Lshortfile)

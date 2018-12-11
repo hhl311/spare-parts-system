@@ -3,13 +3,13 @@ package dao
 import (
 	"context"
 	"encoding/json"
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
 	"github.com/dgraph-io/dgo"
 	"github.com/dgraph-io/dgo/protos/api"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"log"
 	"os"
-	"spare-parts-system/modules/business-structures"
 )
 
 var Logger = log.New(os.Stdout, "[DGraph spare parts DAO] ", log.Ldate|log.Ltime|log.Lshortfile)

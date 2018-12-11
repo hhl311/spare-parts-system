@@ -1,12 +1,12 @@
-package packing_slips_service
+package main
 
 import (
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
+	"github.com/AntoineAube/spare-parts-system/modules/communication"
+	"github.com/AntoineAube/spare-parts-system/modules/packing-slips-service/consumers"
+	"github.com/AntoineAube/spare-parts-system/modules/packing-slips-service/notifications"
 	"log"
 	"os"
-	"spare-parts-system/modules/business-structures"
-	"spare-parts-system/modules/communication"
-	"spare-parts-system/modules/packing-slips-service/consumers"
-	"spare-parts-system/modules/packing-slips-service/notifications"
 	"time"
 )
 

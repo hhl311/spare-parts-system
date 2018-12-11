@@ -3,9 +3,9 @@ package consumers
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
 	"github.com/streadway/amqp"
 	"log"
-	"spare-parts-system/modules/business-structures"
 )
 
 type ValidatedOrdersReceiver struct {

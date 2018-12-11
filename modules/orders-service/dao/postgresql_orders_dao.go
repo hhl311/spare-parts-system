@@ -1,10 +1,10 @@
 package dao
 
 import (
+	"github.com/AntoineAube/spare-parts-system/modules/business-structures"
 	"github.com/go-pg/pg"
 	"github.com/go-pg/pg/orm"
 	"log"
-	"spare-parts-system/modules/business-structures"
 )
 
 type PostgreSQLOrdersDao struct {
