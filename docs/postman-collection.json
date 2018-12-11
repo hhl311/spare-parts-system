@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "11227cc6-e229-4545-9ef4-2109d4ecdcfc",
+		"name": "Spare parts System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Catalog Service",
+			"item": [
+				{
+					"name": "Create a spare part reference",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reference\": \"{{sparePartReference}}\",\n\t\"name\": \"BrakePads++ for Renault Clio\",\n\t\"contentReferences\": [],\n\t\"price\": 45.12\n}"
+						},
+						"url": {
+							"raw": "http://{{catalogServiceHostname}}:{{catalogServicePort}}/spare-parts/",
+							"protocol": "http",
+							"host": [
+								"{{catalogServiceHostname}}"
+							],
+							"port": "{{catalogServicePort}}",
+							"path": [
+								"spare-parts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get one spare part",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{catalogServiceHostname}}:{{catalogServicePort}}/spare-parts/{{sparePartReference}}",
+							"protocol": "http",
+							"host": [
+								"{{catalogServiceHostname}}"
+							],
+							"port": "{{catalogServicePort}}",
+							"path": [
+								"spare-parts",
+								"{{sparePartReference}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all spare parts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{catalogServiceHostname}}:{{catalogServicePort}}/spare-parts/",
+							"protocol": "http",
+							"host": [
+								"{{catalogServiceHostname}}"
+							],
+							"port": "{{catalogServicePort}}",
+							"path": [
+								"spare-parts",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders Service",
+			"item": [
+				{
+					"name": "Create an order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"customerId\": \"antoine\",\n\t\"contentReferences\": [\"{{sparePartReference}}\"]\n}"
+						},
+						"url": {
+							"raw": "http://{{ordersServiceHostname}}:{{ordersServicePort}}/orders/",
+							"protocol": "http",
+							"host": [
+								"{{ordersServiceHostname}}"
+							],
+							"port": "{{ordersServicePort}}",
+							"path": [
+								"orders",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{ordersServiceHostname}}:{{ordersServicePort}}/orders/",
+							"protocol": "http",
+							"host": [
+								"{{ordersServiceHostname}}"
+							],
+							"port": "{{ordersServicePort}}",
+							"path": [
+								"orders",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate one order",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{ordersServiceHostname}}:{{ordersServicePort}}/orders/{{orderId}}?validate=true",
+							"protocol": "http",
+							"host": [
+								"{{ordersServiceHostname}}"
+							],
+							"port": "{{ordersServicePort}}",
+							"path": [
+								"orders",
+								"{{orderId}}"
+							],
+							"query": [
+								{
+									"key": "validate",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "00d5cab6-ada9-4454-a124-4beb8803fcc9",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d8404c90-75f6-40d3-9986-464c2a3c2030",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

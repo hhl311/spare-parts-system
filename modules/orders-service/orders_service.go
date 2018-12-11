@@ -1,14 +1,14 @@
-package main
+package orders_service
 
 import (
-	"../../business-structures"
-	"../../communication"
-	"./consumers"
-	"./dao"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"spare-parts-system/modules/business-structures"
+	"spare-parts-system/modules/communication"
+	"spare-parts-system/modules/orders-service/consumers"
+	"spare-parts-system/modules/orders-service/dao"
 	"strconv"
 	"time"
 )

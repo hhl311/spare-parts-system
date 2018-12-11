@@ -1,11 +1,11 @@
 package consumers
 
 import (
-	"../../../business-structures"
 	"bytes"
 	"encoding/json"
 	"github.com/streadway/amqp"
 	"log"
+	"spare-parts-system/modules/business-structures"
 )
 
 type ValidatedOrdersSender struct {

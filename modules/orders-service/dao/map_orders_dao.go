@@ -1,8 +1,6 @@
 package dao
 
-import (
-	"../../../business-structures"
-)
+import "spare-parts-system/modules/business-structures"
 
 type MapOrdersDao struct {
 	content map[int]models.Order
