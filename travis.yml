@@ -1,0 +1,9 @@
+language: go
+
+sudo: false
+
+go:
+  - master
+
+git:
+  depth: 1
