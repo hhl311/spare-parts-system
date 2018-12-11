@@ -1,7 +1,7 @@
 BINARY_NAME=catalog_service
 BINARY_UNIX=$(BINARY_NAME)_unix
 DOCKER_OWNER=antoineaube
-DOCKER_IMAGE=catalog-service
+DOCKER_IMAGE=sps-catalog-service
 
 all: clean docker-build
 
@@ -23,3 +23,6 @@ $(BINARY_UNIX):
 
 docker-build: $(BINARY_UNIX)
 	docker build -t $(DOCKER_OWNER)/$(DOCKER_IMAGE) .
+
+deploy:
+	docker push $(DOCKER_OWNER)/$(DOCKER_IMAGE)
