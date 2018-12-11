@@ -1,6 +1,6 @@
 package notifications
 
-import "../../../business-structures"
+import "spare-parts-system/modules/business-structures"
 
 type PackingSkipsNotifier interface {
 	Notify(packingSlip models.PackingSlip) error

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"../../business-structures"
-	"./dao"
+	"spare-parts-system/modules/catalog-service/src/dao"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"spare-parts-system/modules/business-structures"
 )
 
 const (

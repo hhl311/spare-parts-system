@@ -1,12 +1,12 @@
-package main
+package packing_slips_service
 
 import (
-	"../../business-structures"
-	"../../communication"
-	"./consumers"
-	"./notifications"
 	"log"
 	"os"
+	"spare-parts-system/modules/business-structures"
+	"spare-parts-system/modules/communication"
+	"spare-parts-system/modules/packing-slips-service/consumers"
+	"spare-parts-system/modules/packing-slips-service/notifications"
 	"time"
 )
 
